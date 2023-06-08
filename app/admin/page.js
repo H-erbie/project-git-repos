@@ -29,15 +29,18 @@ const page = () => {
       }
   }, [user]);
   const imagesRef = ref(storage, `${user != [] ? user.email : ''}/`);
-  useEffect(() => {
-    listAll(imagesRef).then((res) => {
+  const fetchImg = async() => {
+      await listAll(imagesRef).then((res) => {
       res.items.forEach((item) => {
         getDownloadURL(item).then((url) => {
           setImageList((prev) => [...prev, url]);
           console.log(imageList)
         });
       });
-    });
+    })
+  }
+  useEffect(() => {
+   fetchImg()
   }, []);
 
   const fetchRepos = async () => {
@@ -70,15 +73,17 @@ const page = () => {
           Welcome Home, <span className="font-semibold">{user != [] ? user.email : ''}</span>
         </h1>
         <Suspense fallback={<Loading />}>
+        <div className="w-[200px] h-[200px] overflow-hidden rounded-[50%] flex items-center justify-center flex-col">
         {imageList.map((url) => {
             return (
               <img
                 src={url}
-                className="rounded-[50%] w-100px h-100px img"
+                className="rounded-[50%] w-full h-auto img"
                 alt="Picture of the user"
               />
             );
           })}
+        </div>
         </Suspense>
         <div className="p-3 flex flex-col gap-3 mx-auto">
           <textarea
