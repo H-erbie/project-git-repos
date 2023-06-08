@@ -19,6 +19,9 @@ const page = () => {
   const [returnText, setReturnText] = useState("");
   const { user } = useGlobalContext();
   const router = useRouter();
+  useEffect(()=>{
+    console.log(imageList)
+  },[imageList])
   useEffect(() => {
     if (user == []) {
       router.push("/")
@@ -31,6 +34,7 @@ const page = () => {
       res.items.forEach((item) => {
         getDownloadURL(item).then((url) => {
           setImageList((prev) => [...prev, url]);
+          console.log(imageList)
         });
       });
     });
@@ -63,9 +67,10 @@ const page = () => {
     <Suspense fallback={<Loading />}>
       <div className="wrap flex flex-col gap-3 admin">
         <h1>
-          Welcom Home, <span className="font-semibold">{user != [] ? user.email : ''}</span>
+          Welcome Home, <span className="font-semibold">{user != [] ? user.email : ''}</span>
         </h1>
-          {imageList.map((url) => {
+        <Suspense fallback={<Loading />}>
+        {imageList.map((url) => {
             return (
               <img
                 src={url}
@@ -74,6 +79,7 @@ const page = () => {
               />
             );
           })}
+        </Suspense>
         <div className="p-3 flex flex-col gap-3 mx-auto">
           <textarea
             className="text-black"
