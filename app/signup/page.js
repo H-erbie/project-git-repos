@@ -26,7 +26,6 @@ const page = () => {
     uploadImage();
     setPassword('')
     setEmail('')
-    setImageUpload(null)
     if (error) {
       return console.log(error);
     }
@@ -73,7 +72,6 @@ const page = () => {
             type="file"
             name='file'
             id='file'
-            value={imageUpload}
             onChange={(e) => setImageUpload(e.target.files[0])}
           />
           <button type="submit" className="btn">
