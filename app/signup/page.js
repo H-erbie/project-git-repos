@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import signUp from "@/firebase/auth/signUp";
 import { useRouter } from "next/navigation";
@@ -22,7 +22,11 @@ const page = () => {
   const handleForm = async (e) => {
     e.preventDefault();
     const { result, error } = await signUp(email, password);
+    
     uploadImage();
+    setPassword('')
+    setEmail('')
+    setImageUpload(null)
     if (error) {
       return console.log(error);
     }
@@ -48,6 +52,7 @@ const page = () => {
           <input
             type="email"
             required
+            value={email}
             placeholder="enter your email"
             id="email"
             name="email"
@@ -56,17 +61,21 @@ const page = () => {
           <label htmlFor="password">Your password</label>
           <input
             type="password"
+            value={password}
             id="password"
             name="password"
             required
             placeholder="enter your password"
             onChange={(e) => setPassword(e.target.value)}
           ></input>
+          <label htmlFor="file">Upload Profile picture</label>
           <input
             type="file"
+            name='file'
+            id='file'
+            value={imageUpload}
             onChange={(e) => setImageUpload(e.target.files[0])}
           />
-          
           <button type="submit" className="btn">
             sign up
           </button>

@@ -15,7 +15,7 @@
     @apply container  flex flex-col justify-center items-center mx-auto;
   }
   .head{
-    @apply capitalize text-4xl text-center mb-10 font-bold
+    @apply capitalize text-xl sm:text-2xl lg:text-4xl text-center mb-10 font-bold
   }
   input[type='email'], input[type='password']{
     outline: none;
@@ -37,7 +37,7 @@
     max-width: 200px
   }
   .sub-head{
-    @apply capitalize text-2xl text-center font-semibold;
+    @apply capitalize text-lg sm:text-xl text-center font-semibold;
   }
   .btn{
     @apply w-max px-4 py-2 text-black bg-blue-400 transition duration-500 rounded-lg mx-auto hover:bg-blue-500

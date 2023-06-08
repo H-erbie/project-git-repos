@@ -9,7 +9,7 @@ const auth = getAuth(firebase_app)
 
 const AuthContext = React.createContext();
 const AuthContextProvider = ({children}) => {
-    const [user, setUser] = React.useState(null)
+    const [user, setUser] = React.useState([])
     const router = useRouter();
     React.useEffect(()=>{
         const unsubscribe = onAuthStateChanged(auth, (user) =>{
@@ -17,7 +17,7 @@ const AuthContextProvider = ({children}) => {
                 setUser(user)
             }
             else{
-                setUser(null)
+                setUser([])
                 router.push('/')
             }
         })

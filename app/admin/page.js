@@ -19,10 +19,13 @@ const page = () => {
   const [returnText, setReturnText] = useState("");
   const { user } = useGlobalContext();
   const router = useRouter();
-  React.useEffect(() => {
-    if (user == null) router.push("/");
+  useEffect(() => {
+    if (user == []) {
+      router.push("/")
+      console.log('user null!')
+      }
   }, [user]);
-  const imagesRef = ref(storage, `${user.email}/`);
+  const imagesRef = ref(storage, `${user != [] ? user.email : ''}/`);
   useEffect(() => {
     listAll(imagesRef).then((res) => {
       res.items.forEach((item) => {
@@ -44,6 +47,7 @@ const page = () => {
 
   const sendToDb = async () => {
     await setDoc(doc(db, "message", "content"), text);
+    setText({...text, msg:''})
   };
   const returnFromDb = async () => {
     const docRef = doc(db, "message", "content");
@@ -59,7 +63,7 @@ const page = () => {
     <Suspense fallback={<Loading />}>
       <div className="wrap flex flex-col gap-3 admin">
         <h1>
-          Welcom Home, <span className="font-semibold">{user.email}</span>
+          Welcom Home, <span className="font-semibold">{user != [] ? user.email : ''}</span>
         </h1>
         <Suspense fallback={<Loading />}>
           {imageList.map((url) => {
@@ -76,6 +80,7 @@ const page = () => {
           <textarea
             className="text-black"
             placeholder="slap your thoughts in here"
+            value={text.msg}
             onChange={(e) => setText({ ...text, msg: e.target.value })}
           ></textarea>
           <button className="link-btn" onClick={sendToDb}>
@@ -91,7 +96,7 @@ const page = () => {
           </p>
         </div>
         <h3 className="sub-head">My repos</h3>
-        <div className="grid grid-cols-4 place-items-center gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-3 sm:grid-cols-2 lg:grid-cols-4 place-items-center gap-3">
           <Suspense fallback={<Loading />}>
             {reps.map((item) => {
               const { id, name } = item;
