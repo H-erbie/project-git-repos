@@ -65,7 +65,6 @@ const page = () => {
         <h1>
           Welcom Home, <span className="font-semibold">{user != [] ? user.email : ''}</span>
         </h1>
-        <Suspense fallback={<Loading />}>
           {imageList.map((url) => {
             return (
               <img
@@ -75,7 +74,6 @@ const page = () => {
               />
             );
           })}
-        </Suspense>
         <div className="p-3 flex flex-col gap-3 mx-auto">
           <textarea
             className="text-black"
