@@ -2,7 +2,6 @@
 import React,{Suspense} from "react";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
 import firebase_app from "@/firebase/config";
-import Loading from "@/app/loading"; 
 import { useRouter } from "next/navigation";
 
 const auth = getAuth(firebase_app)
@@ -22,7 +21,7 @@ const AuthContextProvider = ({children}) => {
             }
         })
     },[])
-    return <AuthContext.Provider value={{user}}><Suspense fallback={<Loading/>}>{children}</Suspense></AuthContext.Provider>
+    return <AuthContext.Provider value={{user}}>{children}</AuthContext.Provider>
 }
 export const useGlobalContext = () =>{
     return React.useContext(AuthContext)

@@ -4,53 +4,28 @@ import React, { Suspense, useEffect, useState } from "react";
 import { getAuth } from "firebase/auth";
 import { useGlobalContext } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
-import firebase_app, { storage } from "@/firebase/config";
-import Loading from "../loading";
+import firebase_app from "@/firebase/config";
 import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
-import { listAll, ref, getDownloadURL } from "firebase/storage";
-import Link from "next/link";
+import ProfileImg from "./profileImg";
+import Repos from "./repos";
+import LoadImg from "./loadImg";
+import LoadUser from "./loadUser";
+import User from "./User";
+import LoadRepo from "./loadRepo";
 
 const auth = getAuth(firebase_app);
 const page = () => {
-  const [reps, setReps] = useState([]);
   const db = getFirestore(firebase_app);
-  const [imageList, setImageList] = useState([]);
   const [text, setText] = useState({ id: "user", msg: "" });
   const [returnText, setReturnText] = useState("");
   const { user } = useGlobalContext();
   const router = useRouter();
-  useEffect(()=>{
-    console.log(imageList)
-  },[imageList])
+  
   useEffect(() => {
     if (user == []) {
       router.push("/")
-      console.log('user null!')
       }
   }, [user]);
-  const imagesRef = ref(storage, `${user != [] ? user.email : ''}/`);
-  const fetchImg = async() => {
-      await listAll(imagesRef).then((res) => {
-      res.items.forEach((item) => {
-        getDownloadURL(item).then((url) => {
-          setImageList((prev) => [...prev, url]);
-          console.log(imageList)
-        });
-      });
-    })
-  }
-  useEffect(() => {
-   fetchImg()
-  }, []);
-
-  const fetchRepos = async () => {
-    const response = await fetch("https://api.github.com/users/H-erbie/repos");
-    const repos = await response.json();
-    setReps(repos);
-  };
-  useEffect(() => {
-    fetchRepos();
-  }, [reps]);
 
   const sendToDb = async () => {
     await setDoc(doc(db, "message", "content"), text);
@@ -67,24 +42,15 @@ const page = () => {
     }
   };
   return (
-    <Suspense fallback={<Loading />}>
       <div className="wrap flex flex-col gap-3 admin">
         <h1>
-          Welcome Home, <span className="font-semibold">{user != [] ? user.email : ''}</span>
+          Welcome Home, <Suspense fallback={<LoadUser/>}><User/></Suspense>
         </h1>
-        <Suspense fallback={<Loading />}>
         <div className="w-[200px] h-[200px] overflow-hidden rounded-[50%] flex items-center justify-center flex-col">
-        {imageList.map((url) => {
-            return (
-              <img
-                src={url}
-                className="rounded-[50%] w-full h-auto img"
-                alt="Picture of the user"
-              />
-            );
-          })}
-        </div>
+        <Suspense fallback={<LoadImg/>}>
+          <ProfileImg/>
         </Suspense>
+        </div>
         <div className="p-3 flex flex-col gap-3 mx-auto">
           <textarea
             className="text-black"
@@ -105,28 +71,13 @@ const page = () => {
           </p>
         </div>
         <h3 className="sub-head">My repos</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 sm:grid-cols-2 lg:grid-cols-4 place-items-center gap-3">
-          <Suspense fallback={<Loading />}>
-            {reps.map((item) => {
-              const { id, name } = item;
-              return (
-                <Link
-                  href={`/admin/${name}`}
-                  className="link-btn text-white bg-gray-400 p-5"
-                >
-                  <div key={id}>
-                    <p>{name}</p>
-                  </div>
-                </Link>
-              );
-            })}
-          </Suspense>
-        </div>
+        <Suspense fallback={<LoadRepo/>}>
+        <Repos/>
+        </Suspense>
         <button className="btn" onClick={() => auth.signOut()}>
           sign out
         </button>
       </div>
-    </Suspense>
   );
 };
 
